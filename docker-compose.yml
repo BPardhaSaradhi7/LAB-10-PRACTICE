@@ -1,0 +1,42 @@
+services:
+  mysqldb:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: docker
+      MYSQL_DATABASE: mywdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - springboot-mysql-net
+
+  backend:
+    image: bpardhasaradhi7/docker-backendp:latest
+    container_name: springbootp
+    ports:
+      - "2025:2209"
+    depends_on:
+      - mysqldb
+    restart: on-failure
+    networks:
+      - springboot-mysql-net
+
+  frontend:
+    image: bpardhasaradhi7/docker-frontendp:latest
+    container_name: reactp
+    ports:
+      - "5172:80"
+    depends_on:
+      - backend
+    restart: on-failure
+    networks:
+      - springboot-mysql-net
+
+volumes:
+  mysql_data:
+
+networks:
+  springboot-mysql-net:
+
